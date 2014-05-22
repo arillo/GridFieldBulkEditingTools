@@ -21,7 +21,9 @@ class GridFieldBulkUpload implements GridField_HTMLProvider, GridField_URLHandle
     'fileRelationName'  => null,
     'folderName'        => 'bulkUpload',
     'maxFileSize'       => null,
-    'sequentialUploads' => false
+    'sequentialUploads' => false,
+    'canAttachExisting' => false,
+	'canPreviewFolder'  => true
 	);
 
 
@@ -160,6 +162,8 @@ class GridFieldBulkUpload implements GridField_HTMLProvider, GridField_URLHandle
 			->setConfig('previewMaxWidth', 20)
 			->setConfig('previewMaxHeight', 20)
 			->setConfig('changeDetection', false)
+			->setConfig('canPreviewFolder', $this->getConfig('canPreviewFolder'))
+			->setConfig('canAttachExisting', $this->getConfig('canAttachExisting'))
 
 			->setTemplate('GridFieldBulkUploadField')
 			->setDownloadTemplateName('colymba-bulkuploaddownloadtemplate')
@@ -230,13 +234,18 @@ class GridFieldBulkUpload implements GridField_HTMLProvider, GridField_URLHandle
 				->addExtraClass('bulkUploadCancelButton ss-ui-action-destructive')
 				->setAttribute('data-icon', 'decline')
 				->setAttribute('data-url', $gridField->Link('bulkupload/cancel'))
-				->setUseButtonTag(true);			
-
-			$editAllButton = FormAction::create('EditAll', _t('GRIDFIELD_BULK_UPLOAD.EDIT_ALL_BTN_LABEL', 'Edit all'))
+				->setUseButtonTag(true);
+			$bulkManager_config = $bulkManager->first()->getConfig();
+			$bulkManager_actions = $bulkManager_config['actions'];
+			if(array_key_exists('bulkedit' , $bulkManager_actions)){
+				$editAllButton = FormAction::create('EditAll', _t('GRIDFIELD_BULK_UPLOAD.EDIT_ALL_BTN_LABEL', 'Edit all'))
 					->addExtraClass('bulkUploadEditButton')
 					->setAttribute('data-icon', 'pencil')
 					->setAttribute('data-url', $gridField->Link('bulkupload/edit'))
 					->setUseButtonTag(true);
+			}else{
+				$editAllButton = '';
+			}
 		}
 		else{
 			$cancelButton = '';
