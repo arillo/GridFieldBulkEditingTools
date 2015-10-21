@@ -311,7 +311,7 @@ class GridFieldBulkUpload implements GridField_HTMLProvider, GridField_URLHandle
     {
     	$uploadField->getValidator()->{$fn}($param);
     }
-		
+		$uploadField->relationAutoSetting = false;
 		return $uploadField;
 	}
 
